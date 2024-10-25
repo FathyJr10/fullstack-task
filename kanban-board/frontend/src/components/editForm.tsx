@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 
-interface ModalProps {
+interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: {
-    name?: string;
-    age?: number;
-    email?: string;
-    mobileNumber?: string;
-  }) => void;
+  onSubmit: (formData: any) => Promise<void>; // Ensure this function can handle promises for async updates
   onDelete: () => Promise<void>;
-  formData: { name: string; age: number; email: string; mobileNumber: string };
+  formData: {
+    name: string;
+    age: number;
+    email: string;
+    mobileNumber: string;
+    status: string; // Include status in form data
+  };
 }
 
-const Popup: React.FC<ModalProps> = ({
+const Popup: React.FC<PopupProps> = ({
   isOpen,
   onClose,
   onSubmit,
@@ -22,9 +23,11 @@ const Popup: React.FC<ModalProps> = ({
 }) => {
   const [localFormData, setLocalFormData] = useState(formData);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [status, setStatus] = React.useState(formData.status);
 
   useEffect(() => {
     setLocalFormData(formData);
+    setStatus(formData.status); // Ensure status is updated when formData changes
   }, [formData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,23 +64,20 @@ const Popup: React.FC<ModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const updatedFields: Partial<typeof localFormData> = {};
+    const updatedFields: Partial<typeof localFormData> = {
+      name: localFormData.name,
+      age: localFormData.age,
+      mobileNumber: localFormData.mobileNumber,
+      status, // Include the updated status
+    };
 
-    if (localFormData.name !== formData.name) {
-      updatedFields.name = localFormData.name;
-    }
-    if (localFormData.age !== formData.age) {
-      updatedFields.age = localFormData.age;
-    }
-    if (localFormData.mobileNumber !== formData.mobileNumber) {
-      updatedFields.mobileNumber = localFormData.mobileNumber;
-    }
-
-    onSubmit(updatedFields);
+    // Call onSubmit with the updated fields
+    await onSubmit(updatedFields);
+    onClose(); // Close the popup after saving
   };
 
   const handleDelete = async () => {
@@ -151,6 +151,27 @@ const Popup: React.FC<ModalProps> = ({
           />
           {errors.mobileNumber && (
             <span className="text-red-500 text-sm">{errors.mobileNumber}</span>
+          )}
+
+          {/* Updated Select Menu */}
+          <select
+            value={status}
+            onChange={(e) => {
+              const newStatus = e.target.value;
+              setStatus(newStatus);
+              setLocalFormData({ ...localFormData, status: newStatus }); // Update local form data with new status
+            }}
+            className={`text-black border p-2 rounded mb-2 w-full ${
+              errors.status ? "border-red-500" : ""
+            }`}
+          >
+            <option value="Unclaimed">Unclaimed</option>
+            <option value="First Contact">First Contact</option>
+            <option value="Preparing Work Offer">Preparing Work Offer</option>
+            <option value="Sent to Therapists">Sent to Therapists</option>
+          </select>
+          {errors.status && (
+            <span className="text-red-500 text-sm">{errors.status}</span>
           )}
 
           <div className="flex justify-end space-x-2">

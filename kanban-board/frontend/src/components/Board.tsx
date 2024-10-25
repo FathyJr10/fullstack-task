@@ -23,8 +23,8 @@ const Board: React.FC = () => {
   }, []);
 
   const handleEditClick = (member: Member) => {
-    setEditingMember(member);
-    setModalOpen(true);
+    setEditingMember(member); // Set the member to be edited
+    setModalOpen(true); // Open the modal
   };
 
   const handleSubmit = async (
@@ -33,17 +33,17 @@ const Board: React.FC = () => {
       age: number;
       mobileNumber: string;
       email: string;
+      status: string; // Include status here
     }>
   ) => {
     if (editingMember) {
-      await updateMember(editingMember.id, formData);
-      setEditingMember(null);
-      loadMembers();
-      setModalOpen(false);
+      await updateMember(editingMember.id, formData); // Update the member with new data
+      setEditingMember(null); // Clear the editing member
+      loadMembers(); // Reload the member list
+      setModalOpen(false); // Close the modal
     }
   };
 
-  // Filter members by status
   const unclaimedMembers = members.filter(
     (member) => member.status === "Unclaimed"
   );
@@ -56,12 +56,13 @@ const Board: React.FC = () => {
   const sentToTherapistsMembers = members.filter(
     (member) => member.status === "Sent to Therapists"
   );
+
   const handleDelete = async () => {
     if (editingMember) {
-      await deleteMember(editingMember.id); // Call the delete function
-      setEditingMember(null);
-      loadMembers(); // Refresh member list after deletion
-      setModalOpen(false); // Close modal
+      await deleteMember(editingMember.id); // Delete the selected member
+      setEditingMember(null); // Clear the editing member
+      loadMembers(); // Reload member list after deletion
+      setModalOpen(false); // Close the modal
     }
   };
 
@@ -75,7 +76,6 @@ const Board: React.FC = () => {
             {unclaimedMembers.length}
           </h3>
         </div>
-
         <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
           {unclaimedMembers.map((member) => (
             <Card
@@ -84,7 +84,7 @@ const Board: React.FC = () => {
               age={member.age}
               email={member.email}
               mobileNumber={member.mobileNumber}
-              onEdit={() => handleEditClick(member)}
+              onEdit={() => handleEditClick(member)} // Trigger edit on card click
             />
           ))}
         </div>
@@ -98,7 +98,6 @@ const Board: React.FC = () => {
             {firstContactMembers.length}
           </h3>
         </div>
-
         <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
           {firstContactMembers.map((member) => (
             <Card
@@ -123,7 +122,6 @@ const Board: React.FC = () => {
             {preparingWorkOfferMembers.length}
           </h3>
         </div>
-
         <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
           {preparingWorkOfferMembers.map((member) => (
             <Card
@@ -148,7 +146,6 @@ const Board: React.FC = () => {
             {sentToTherapistsMembers.length}
           </h3>
         </div>
-
         <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
           {sentToTherapistsMembers.map((member) => (
             <Card
@@ -168,15 +165,16 @@ const Board: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => {
           setModalOpen(false);
-          setEditingMember(null); // Clear editing state
+          setEditingMember(null);
         }}
-        onDelete={handleDelete} // Pass the handleDelete function
+        onDelete={handleDelete}
         onSubmit={handleSubmit}
         formData={{
           name: editingMember?.name || "",
           age: editingMember?.age || 0,
           email: editingMember?.email || "",
           mobileNumber: editingMember?.mobileNumber || "",
+          status: editingMember?.status || "",
         }}
       />
     </div>

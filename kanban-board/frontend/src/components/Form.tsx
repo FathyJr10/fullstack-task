@@ -64,8 +64,8 @@ const Form: React.FC = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    //e.preventDefault();
 
     if (validateForm()) {
       try {

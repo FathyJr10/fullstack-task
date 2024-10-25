@@ -5,7 +5,7 @@ interface CardProps {
   age: number;
   email: string;
   mobileNumber: string;
-  onEdit: () => void; // Add this line
+  onEdit: () => void;
 }
 const Card: React.FC<CardProps> = ({
   name,
