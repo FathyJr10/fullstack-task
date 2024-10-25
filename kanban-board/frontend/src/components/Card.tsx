@@ -5,10 +5,21 @@ interface CardProps {
   age: number;
   email: string;
   mobileNumber: string;
+  onEdit: () => void; // Add this line
 }
-const Card: React.FC<CardProps> = ({ name, age, email, mobileNumber }) => {
+const Card: React.FC<CardProps> = ({
+  name,
+  age,
+  email,
+  mobileNumber,
+  onEdit,
+}) => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 mb-4 overflow-hidden">
+    <div
+      className="bg-white shadow-md rounded-lg p-4 mb-4 overflow-hidden cursor-pointer
+    "
+      onClick={onEdit} // Handle click event
+    >
       <div className="flex items-center justify-between flex-wrap">
         <h2 className="text-black font-semibold text-sm sm:text-base md:text-lg lg:text-lg break-words">
           {name}

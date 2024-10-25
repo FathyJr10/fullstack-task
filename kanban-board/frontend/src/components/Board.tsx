@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { fetchMembers } from "../backendInt";
+import { deleteMember, fetchMembers, updateMember } from "../backendInt";
 import Member from "./member";
 import Card from "./Card";
+import Popup from "./editForm";
 
 const Board: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
+  const [editingMember, setEditingMember] = useState<Member | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+
   const loadMembers = async () => {
     try {
       const membersData = await fetchMembers();
@@ -16,14 +20,32 @@ const Board: React.FC = () => {
 
   useEffect(() => {
     loadMembers();
-    // Set up polling every 10 seconds
-    const pollingInterval = setInterval(() => {
-      loadMembers();
-    }, 5000);
-    return () => clearInterval(pollingInterval);
   }, []);
+
+  const handleEditClick = (member: Member) => {
+    setEditingMember(member);
+    setModalOpen(true);
+  };
+
+  const handleSubmit = async (
+    formData: Partial<{
+      name: string;
+      age: number;
+      mobileNumber: string;
+      email: string;
+    }>
+  ) => {
+    if (editingMember) {
+      await updateMember(editingMember.id, formData);
+      setEditingMember(null);
+      loadMembers();
+      setModalOpen(false);
+    }
+  };
+
+  // Filter members by status
   const unclaimedMembers = members.filter(
-    (member: { status: string }) => member.status === "Unclaimed"
+    (member) => member.status === "Unclaimed"
   );
   const firstContactMembers = members.filter(
     (member) => member.status === "First Contact"
@@ -34,6 +56,14 @@ const Board: React.FC = () => {
   const sentToTherapistsMembers = members.filter(
     (member) => member.status === "Sent to Therapists"
   );
+  const handleDelete = async () => {
+    if (editingMember) {
+      await deleteMember(editingMember.id); // Call the delete function
+      setEditingMember(null);
+      loadMembers(); // Refresh member list after deletion
+      setModalOpen(false); // Close modal
+    }
+  };
 
   return (
     <div className="w-screen bg-blue-50 p-4 lg:p-8 rounded-lg grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-h-auto">
@@ -46,7 +76,7 @@ const Board: React.FC = () => {
           </h3>
         </div>
 
-        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[330px] overflow-y-auto relative">
+        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
           {unclaimedMembers.map((member) => (
             <Card
               key={member.id}
@@ -54,6 +84,7 @@ const Board: React.FC = () => {
               age={member.age}
               email={member.email}
               mobileNumber={member.mobileNumber}
+              onEdit={() => handleEditClick(member)}
             />
           ))}
         </div>
@@ -68,7 +99,18 @@ const Board: React.FC = () => {
           </h3>
         </div>
 
-        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[330px] overflow-y-auto relative"></div>
+        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
+          {firstContactMembers.map((member) => (
+            <Card
+              key={member.id}
+              name={member.name}
+              age={member.age}
+              email={member.email}
+              mobileNumber={member.mobileNumber}
+              onEdit={() => handleEditClick(member)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Preparing Work Offer Column */}
@@ -82,7 +124,18 @@ const Board: React.FC = () => {
           </h3>
         </div>
 
-        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[330px] overflow-y-auto relative"></div>
+        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
+          {preparingWorkOfferMembers.map((member) => (
+            <Card
+              key={member.id}
+              name={member.name}
+              age={member.age}
+              email={member.email}
+              mobileNumber={member.mobileNumber}
+              onEdit={() => handleEditClick(member)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Sent to Therapists Column */}
@@ -96,8 +149,36 @@ const Board: React.FC = () => {
           </h3>
         </div>
 
-        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[330px] overflow-y-auto relative"></div>
+        <div className="space-y-4 pr-2 max-h-[330px] sm:max-h-[100px] md:max-h-[270px] lg:max-h-[340px] overflow-y-auto relative">
+          {sentToTherapistsMembers.map((member) => (
+            <Card
+              key={member.id}
+              name={member.name}
+              age={member.age}
+              email={member.email}
+              mobileNumber={member.mobileNumber}
+              onEdit={() => handleEditClick(member)}
+            />
+          ))}
+        </div>
       </div>
+
+      {/* Modal for Editing Member */}
+      <Popup
+        isOpen={isModalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setEditingMember(null); // Clear editing state
+        }}
+        onDelete={handleDelete} // Pass the handleDelete function
+        onSubmit={handleSubmit}
+        formData={{
+          name: editingMember?.name || "",
+          age: editingMember?.age || 0,
+          email: editingMember?.email || "",
+          mobileNumber: editingMember?.mobileNumber || "",
+        }}
+      />
     </div>
   );
 };
