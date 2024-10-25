@@ -167,7 +167,7 @@ const Form: React.FC = () => {
         <PhoneInput
           type="text"
           id="mobileNumber"
-          placeholder="Enter mobileNumber number"
+          placeholder="Enter mobile number"
           name="mobileNumber"
           value={formData.mobileNumber}
           onChange={handleMobileNumberChange}

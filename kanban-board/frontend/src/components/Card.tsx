@@ -18,7 +18,7 @@ const Card: React.FC<CardProps> = ({
     <div
       className="bg-white shadow-md rounded-lg p-4 mb-4 overflow-hidden cursor-pointer
     "
-      onClick={onEdit} // Handle click event
+      onClick={onEdit} // Handle click event to open the pop menu
     >
       <div className="flex items-center justify-between flex-wrap">
         <h2 className="text-black font-semibold text-sm sm:text-base md:text-lg lg:text-lg break-words">

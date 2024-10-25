@@ -3,14 +3,14 @@ import React, { useState, useEffect } from "react";
 interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: any) => Promise<void>; // Ensure this function can handle promises for async updates
+  onSubmit: (formData: any) => Promise<void>;
   onDelete: () => Promise<void>;
   formData: {
     name: string;
     age: number;
     email: string;
     mobileNumber: string;
-    status: string; // Include status in form data
+    status: string;
   };
 }
 
@@ -27,7 +27,7 @@ const Popup: React.FC<PopupProps> = ({
 
   useEffect(() => {
     setLocalFormData(formData);
-    setStatus(formData.status); // Ensure status is updated when formData changes
+    setStatus(formData.status);
   }, [formData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

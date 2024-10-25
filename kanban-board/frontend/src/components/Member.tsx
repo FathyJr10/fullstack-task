@@ -7,3 +7,5 @@ interface Member {
   status: string;
 }
 export default Member;
+
+//member interface
