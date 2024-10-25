@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Member } from './members.entity';
 import { CreateMemberDto } from './validateMember';
+import { promises } from 'dns';
 @Injectable()
 export class MemberService {
   constructor(
@@ -69,5 +70,10 @@ export class MemberService {
       throw new NotFoundException(`Member with ID ${id} not found`);
     }
     await this.memberRepository.delete(id); // Deletes the member
+  }
+
+  //delete all members
+  async deleteAllMembers(): Promise<void> {
+    await this.memberRepository.clear();
   }
 }

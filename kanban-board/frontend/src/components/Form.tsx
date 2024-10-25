@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "react-phone-number-input/style.css";
+import { postMember } from "../backendInt";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 
 const Form: React.FC = () => {
@@ -9,10 +10,10 @@ const Form: React.FC = () => {
     name: "",
     age: "",
     email: "",
-    phone: "",
+    mobileNumber: "",
   });
-  const [phoneError, setPhoneError] = useState({
-    phone: "",
+  const [mobileNumberError, setMobileNumberError] = useState({
+    mobileNumber: "",
   });
   const [errors, setErrors] = useState({
     title: "",
@@ -24,7 +25,7 @@ const Form: React.FC = () => {
   // Validation function
   const validateForm = () => {
     let formErrors = { title: "", name: "", age: "", email: "" };
-    let phoneError = { phone: "" };
+    let mobileNumberError = { mobileNumber: "" };
     let isValid = true;
 
     // Title validation
@@ -54,26 +55,32 @@ const Form: React.FC = () => {
       formErrors.email = "Please enter a valid email.";
       isValid = false;
     }
-    if (!formData.phone || !isValidPhoneNumber(formData.phone)) {
-      phoneError.phone = "Please enter a valid phone number.";
+    if (!formData.mobileNumber || !isValidPhoneNumber(formData.mobileNumber)) {
+      mobileNumberError.mobileNumber = "Please enter a valid number.";
       isValid = false;
     }
     setErrors(formErrors);
-    setPhoneError(phoneError);
+    setMobileNumberError(mobileNumberError);
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log("Form submitted successfully:", formData);
+      try {
+        // Attempt to submit the form data to the API
+        const result = await postMember(formData);
+        console.log("Form submitted successfully:", result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
-  const handlePhoneChange = (value: string | undefined) => {
+  const handleMobileNumberChange = (value: string | undefined) => {
     setFormData((prevData) => ({
       ...prevData,
-      phone: value || "", // Update phone in formData
+      mobileNumber: value || "", // Update mobileNumber in formData
     }));
   };
   const handleChange = (
@@ -126,7 +133,7 @@ const Form: React.FC = () => {
           Age:
         </label>
         <input
-          type="text"
+          type="number"
           id="age"
           name="age"
           value={formData.age}
@@ -154,20 +161,23 @@ const Form: React.FC = () => {
       </div>
 
       <div className="flex flex-col">
-        <label htmlFor="phone" className="mb-1">
-          Phone:
+        <label htmlFor="mobileNumber" className="mb-1">
+          mobileNumber:
         </label>
         <PhoneInput
-          id="phone"
-          placeholder="Enter phone number"
-          name="phone"
-          value={formData.phone}
-          onChange={handlePhoneChange}
+          type="text"
+          id="mobileNumber"
+          placeholder="Enter mobileNumber number"
+          name="mobileNumber"
+          value={formData.mobileNumber}
+          onChange={handleMobileNumberChange}
           className="p-2 border rounded-md text-black"
           required
         />
-        {phoneError.phone && (
-          <p className="text-red-500 text-sm">{phoneError.phone}</p>
+        {mobileNumberError.mobileNumber && (
+          <p className="text-red-500 text-sm">
+            {mobileNumberError.mobileNumber}
+          </p>
         )}
       </div>
 

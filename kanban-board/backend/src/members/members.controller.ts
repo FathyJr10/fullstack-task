@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { MemberService } from './members.service';
 import { CreateMemberDto } from './validateMember';
@@ -24,7 +25,7 @@ export class MemberController {
     description: 'Member created successfully',
     type: Member,
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 400, description: 'the email is already registered' })
   @Post()
   async create(@Body() createMemberDto: CreateMemberDto) {
     return await this.memberService.createMember(createMemberDto);
@@ -78,5 +79,12 @@ export class MemberController {
   })
   async deleteMember(@Param('id') id: number): Promise<void> {
     return this.memberService.deleteMember(id);
+  }
+  @Delete()
+  @ApiOperation({ summary: 'Delete all members' })
+  @ApiResponse({ status: 204, description: 'All members deleted successfully' })
+  @HttpCode(204) // Sets response status to 204 No Content
+  async deleteAllMembers(): Promise<void> {
+    await this.memberService.deleteAllMembers();
   }
 }

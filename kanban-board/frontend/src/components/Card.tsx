@@ -4,17 +4,25 @@ interface CardProps {
   name: string;
   age: number;
   email: string;
-  phone: string;
+  mobileNumber: string;
 }
-const Card: React.FC<CardProps> = ({ name, age, email, phone }) => {
+const Card: React.FC<CardProps> = ({ name, age, email, mobileNumber }) => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 mb-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-black font-semibold">{name}</h2>
-        <p className="text-gray-500">{age} yo</p>
+    <div className="bg-white shadow-md rounded-lg p-4 mb-4 overflow-hidden">
+      <div className="flex items-center justify-between flex-wrap">
+        <h2 className="text-black font-semibold text-sm sm:text-base md:text-lg lg:text-lg break-words">
+          {name}
+        </h2>
+        <p className="text-gray-500 text-xs sm:text-sm md:text-base lg:text-base break-words">
+          {age} yo
+        </p>
       </div>
-      <p className="text-black font-semibold">{email}</p>
-      <p className="text-gray-500 font-semibold">{phone}</p>
+      <p className="text-black font-semibold text-xs sm:text-sm md:text-base lg:text-xs break-words">
+        {email}
+      </p>
+      <p className="text-gray-500 font-semibold text-xs sm:text-sm md:text-base lg:text-sm break-words">
+        {mobileNumber}
+      </p>
     </div>
   );
 };
