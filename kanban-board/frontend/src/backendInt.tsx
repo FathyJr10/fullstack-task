@@ -1,7 +1,7 @@
 //this file handle all the end points that comes from the backend side
 
 import axios from "axios";
-import Member from "./components/member";
+import Member from "./components/Member";
 
 //create new member
 export const postMember = async (formData: any) => {

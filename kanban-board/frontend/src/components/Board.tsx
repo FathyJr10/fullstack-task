@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { deleteMember, fetchMembers, updateMember } from "../backendInt";
-import Member from "./member";
+import Member from "./Member";
 import Card from "./Card";
 import Popup from "./editForm";
 
