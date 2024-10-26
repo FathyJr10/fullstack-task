@@ -1,3 +1,4 @@
+//the structure of the member
 interface Member {
   id: number;
   name: string;
@@ -6,6 +7,7 @@ interface Member {
   mobileNumber: string;
   status: string;
 }
+
 export default Member;
 
 //member interface

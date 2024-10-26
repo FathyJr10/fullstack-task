@@ -29,6 +29,7 @@ const Popup: React.FC<PopupProps> = ({
     setLocalFormData(formData);
     setStatus(formData.status);
   }, [formData]);
+  //handle the change in text fields to update it with the data using HTMLInputElement for manipulation
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalFormData({ ...localFormData, [e.target.name]: e.target.value });

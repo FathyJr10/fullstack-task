@@ -5,8 +5,12 @@ import Member from "./Member";
 import Card from "./Card";
 import Popup from "./editForm";
 
-const Board: React.FC = () => {
-  const [members, setMembers] = useState<Member[]>([]);
+interface BoardProps {
+  members: Member[];
+  setMembers: React.Dispatch<React.SetStateAction<Member[]>>; //the state is keep updating its self
+}
+
+const Board: React.FC<BoardProps> = ({ members, setMembers }) => {
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [isPopupOpen, setPopupOpen] = useState(false);
 
@@ -27,8 +31,9 @@ const Board: React.FC = () => {
     setEditingMember(member);
     setPopupOpen(true);
   };
-  //make it optional to
   const handleSubmit = async (
+    //for popUp menu to edit in it
+    //make it optional to change data
     formData: Partial<{
       name: string;
       age: number;
@@ -60,15 +65,20 @@ const Board: React.FC = () => {
 
     // Get the updated members location
     const updatedMembers = [...members];
-    const [movedMember] = updatedMembers.splice(source.index, 1); //move member from card to another
+    const [movedMember] = updatedMembers.splice(source.index, 1); //move member from column to another
     movedMember.status = destination.droppableId; // Update status based on the allocated column
-
     updatedMembers.splice(destination.index, 0, movedMember);
 
     setMembers(updatedMembers);
 
     // update the member status in the backend
-    await updateMember(movedMember.id, { status: movedMember.status });
+    try {
+      await updateMember(movedMember.id, { status: movedMember.status });
+    } catch (error) {
+      //error handling
+      console.error("Error updating member status ", error);
+      alert("Error updating member status ");
+    }
   };
 
   const handleDelete = async () => {
@@ -87,7 +97,8 @@ const Board: React.FC = () => {
   return (
     <DragDropContext onDragEnd={handleOnDrag}>
       <div className="w-screen bg-blue-50 p-4 lg:p-8 rounded-lg grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-h-auto">
-        {/* Unclaimed Column */}
+        {/* Unclaimed Column 
+        droppableId used for updating the user statues by drag and drop*/}
         <Droppable droppableId="Unclaimed">
           {(provided) => (
             <div
@@ -165,7 +176,7 @@ const Board: React.FC = () => {
                           age={member.age}
                           email={member.email}
                           mobileNumber={member.mobileNumber}
-                          onEdit={() => handleEditClick(member)}
+                          onEdit={() => handleEditClick(member)} // Trigger edit on card click
                         />
                       </div>
                     )}
@@ -212,7 +223,7 @@ const Board: React.FC = () => {
                             age={member.age}
                             email={member.email}
                             mobileNumber={member.mobileNumber}
-                            onEdit={() => handleEditClick(member)}
+                            onEdit={() => handleEditClick(member)} // Trigger edit on card click
                           />
                         </div>
                       )}
@@ -260,7 +271,7 @@ const Board: React.FC = () => {
                             age={member.age}
                             email={member.email}
                             mobileNumber={member.mobileNumber}
-                            onEdit={() => handleEditClick(member)}
+                            onEdit={() => handleEditClick(member)} // Trigger edit on card click
                           />
                         </div>
                       )}

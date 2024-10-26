@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import "react-phone-number-input/style.css";
 import { postMember } from "../backendInt";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import Member from "./Member";
 
-const Form: React.FC = () => {
+interface FormProps {
+  addMember: (newMember: Member) => void;
+}
+const Form: React.FC<FormProps> = ({ addMember }) => {
   // State to hold form data
   const [formData, setFormData] = useState({
     title: "",
@@ -21,6 +25,7 @@ const Form: React.FC = () => {
     age: "",
     email: "",
   });
+  //validation of email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   // Validation function
   const validateForm = () => {
@@ -60,33 +65,44 @@ const Form: React.FC = () => {
       isValid = false;
     }
     setErrors(formErrors);
+    //separated mobile number with its error handling as it has a library to make it globally
     setMobileNumberError(mobileNumberError);
     return isValid;
   };
-
-  const handleSubmit = async () => {
-    //e.preventDefault();
-
+  //submission of form checking before sending to the backend
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (validateForm()) {
       try {
         // Attempt to submit the form data to the API
         const result = await postMember(formData);
+        addMember(result);
         console.log("Form submitted successfully:", result);
       } catch (error) {
         console.error("Error:", error);
       }
     }
+    //clear data after submission
+    setFormData({
+      title: "",
+      name: "",
+      age: "",
+      email: "",
+      mobileNumber: "",
+    });
   };
+  //as described before
   const handleMobileNumberChange = (value: string | undefined) => {
     setFormData((prevData) => ({
       ...prevData,
       mobileNumber: value || "", // Update mobileNumber in formData
     }));
   };
+  //handle the change in text fields to update it with the data using HTMLInputElement for manipulation
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value }); //update the member's Form data
   };
 
   return (
